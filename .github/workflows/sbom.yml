@@ -22,8 +22,8 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
             | sh -s -- -b /usr/local/bin
 
-      - name: Generate SBOM JSON
-        run: syft . -o json > sbom.build-time.json
+      - name: Generate CycloneDx SBOM 
+        run: syft . -o cyclonedx-json > sbom.build-time.json
 
       - name: List SBOM file
         run: ls -lh sbom.build-time.json

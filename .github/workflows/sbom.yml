@@ -1,0 +1,40 @@
+name: Generate SBOM
+
+on:
+  push:
+    paths:
+      - 'package.json'
+      - '.github/workflows/sbom.yml'
+
+jobs:
+  build-time-sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log build‑time SBOM start
+        run: echo "BT-SBOM-START: $(date +%s%3N)" 
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SBOM JSON
+        run: syft . -o json > sbom.build-time.json
+
+      - name: List SBOM file
+        run: ls -lh sbom.build-time.json
+
+      - name: Log build‑time SBOM end
+        run: echo "BT-SBOM-END: $(date +%s%3N)"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-time-sbom
+          path: sbom.build-time.json
+
+
+
+
